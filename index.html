@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>科技感动态文字</title>
+    <title>极简渐现文字</title>
     <style>
         body {
             margin: 0;
@@ -18,10 +18,8 @@
                 #FF64B9 80%);
             background-size: 400% 400%;
             animation: gradientFlow 15s ease infinite;
-            overflow: hidden;
         }
 
-        /* 动态背景流动效果 */
         @keyframes gradientFlow {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
@@ -30,35 +28,30 @@
 
         .text-container {
             font-family: 'Helvetica Neue', 'SimHei', sans-serif;
-            font-size: 8rem;
-            font-weight: 300;
-            color: rgba(255,255,255,0.95);
-            letter-spacing: 0.3em;
-            perspective: 800px;
+            font-size: 16rem; /* 原始尺寸的4倍 */
+            font-weight: 700; /* 加粗显示 */
+            color: rgba(255,255,255,0.96);
+            letter-spacing: 0.2em;
             text-align: center;
             padding: 2rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .char {
             display: inline-block;
             opacity: 0;
-            transform: translateY(30px) rotateZ(10deg);
-            animation: bounceAppear 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+            animation: smoothAppear 1.2s cubic-bezier(0.23, 1, 0.32, 1) forwards;
         }
 
-        /* 弹性文字动画 */
-        @keyframes bounceAppear {
+        /* 优化后的渐现动画 */
+        @keyframes smoothAppear {
             0% { 
                 opacity: 0;
-                transform: translateY(50px) rotateZ(-15deg);
-            }
-            70% {
-                opacity: 1;
-                transform: translateY(-15px) rotateZ(5deg);
+                transform: translateY(15px);
             }
             100% {
                 opacity: 1;
-                transform: translateY(0) rotateZ(0);
+                transform: translateY(0);
             }
         }
     </style>
@@ -67,26 +60,27 @@
     <div class="text-container" id="text"></div>
 
     <script>
-        // 增强型弹性动画配置
         const text = "你好呀！";
         const container = document.getElementById('text');
         
+        // 生成字符元素
         text.split('').forEach((char, index) => {
             const span = document.createElement('span');
             span.className = 'char';
             span.textContent = char;
-            span.style.animationDelay = `${index * 0.15}s`;
+            span.style.animationDelay = `${index * 0.25}s`;
             container.appendChild(span);
         });
 
-        // 添加悬停互动效果
-        container.addEventListener('mouseover', () => {
-            container.style.transform = 'scale(1.05)';
-            container.style.transition = 'transform 0.3s ease';
-        });
-        
-        container.addEventListener('mouseout', () => {
-            container.style.transform = 'scale(1)';
+        // 添加点击重置动画
+        container.addEventListener('click', () => {
+            const chars = document.querySelectorAll('.char');
+            chars.forEach((char, index) => {
+                char.style.animation = 'none';
+                setTimeout(() => {
+                    char.style.animation = `smoothAppear 1.2s forwards ${index * 0.25}s`;
+                }, 50);
+            });
         });
     </script>
 </body>
