@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>智能缩放文字</title>
+    <title>顺序缩放文字</title>
     <style>
         body {
             margin: 0;
@@ -30,13 +30,14 @@
             color: rgba(255,255,255,0.96);
             letter-spacing: 0.15em;
             text-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            white-space: nowrap; /* 防止换行 */
         }
 
         .char {
             display: inline-block;
             opacity: 0;
             transform: scale(0.3);
-            animation: smartScale 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation: smartScale 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
 
         @keyframes smartScale {
@@ -55,24 +56,27 @@
     <div class="text-container" id="text"></div>
 
     <script>
-        const text = "你好世界！";
+        const text = "你好呀！";
         const container = document.getElementById('text');
         
-        // 智能延迟生成器（指数衰减模式）
+        // 左起顺序延迟（首字符立即出现，后续字符延迟递增）
         text.split('').forEach((char, index) => {
             const span = document.createElement('span');
             span.className = 'char';
             span.textContent = char;
-            span.style.animationDelay = `${Math.pow(0.15, index + 1)}s`; // 指数级延迟
+            // 使用二次函数实现加速延迟：0s, 0.15s, 0.3s, 0.45s...
+            span.style.animationDelay = `${index * 0.15}s`; 
             container.appendChild(span);
         });
 
-        // 智能动画重置（支持空格键/点击）
+        // 增强型重置功能
         const resetAnimation = () => {
-            container.querySelectorAll('.char').forEach(char => {
+            container.querySelectorAll('.char').forEach((char, index) => {
                 char.style.animation = 'none';
-                setTimeout(() => char.style.animation = 
-                    `smartScale 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards`, 10);
+                setTimeout(() => {
+                    char.style.animation = 
+                        `smartScale 1.2s cubic-bezier(0.4, 0, 0.2, 1) forwards ${index * 0.15}s`;
+                }, 10);
             });
         };
 
