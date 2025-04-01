@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>缩放渐现文字</title>
+    <title>智能缩放文字</title>
     <style>
         body {
             margin: 0;
@@ -12,13 +12,12 @@
             justify-content: center;
             align-items: center;
             background: linear-gradient(135deg, 
-                #4FACFE 20%, 
-                #FF64B9 80%);
-            background-size: 400% 400%;
-            animation: gradientFlow 18s ease infinite;
+                #6C8CD5 0%, 
+                #FF89C6 100%);
+            animation: bgFlow 20s ease infinite;
         }
 
-        @keyframes gradientFlow {
+        @keyframes bgFlow {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
@@ -26,30 +25,24 @@
 
         .text-container {
             font-family: 'Helvetica Neue', 'SimHei', sans-serif;
-            font-size: 16rem;
-            font-weight: 700;
+            font-size: 14rem;
+            font-weight: 800;
             color: rgba(255,255,255,0.96);
             letter-spacing: 0.15em;
-            text-align: center;
-            padding: 2rem;
+            text-shadow: 0 4px 16px rgba(0,0,0,0.12);
         }
 
         .char {
             display: inline-block;
             opacity: 0;
-            transform: scale(0.5);
-            animation: scaleAppear 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            transform: scale(0.3);
+            animation: smartScale 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
 
-        /* 非线性缩放动画 */
-        @keyframes scaleAppear {
+        @keyframes smartScale {
             0% {
                 opacity: 0;
                 transform: scale(0.3);
-            }
-            40% {
-                opacity: 0.5;
-                transform: scale(0.8);
             }
             100% {
                 opacity: 1;
@@ -62,28 +55,29 @@
     <div class="text-container" id="text"></div>
 
     <script>
-        const text = "你好呀！";
+        const text = "你好世界！";
         const container = document.getElementById('text');
         
-        // 生成动态字符
+        // 智能延迟生成器（指数衰减模式）
         text.split('').forEach((char, index) => {
             const span = document.createElement('span');
             span.className = 'char';
             span.textContent = char;
-            span.style.animationDelay = `${index * 0.2}s`;
+            span.style.animationDelay = `${Math.pow(0.15, index + 1)}s`; // 指数级延迟
             container.appendChild(span);
         });
 
-        // 添加键盘互动
-        document.addEventListener('keydown', (e) => {
-            if(e.code === 'Space') {
-                container.querySelectorAll('.char').forEach(char => {
-                    char.style.animation = 'none';
-                    setTimeout(() => char.style.animation = 
-                        `scaleAppear 1s cubic-bezier(0.4, 0, 0.2, 1) forwards`, 50);
-                });
-            }
-        });
+        // 智能动画重置（支持空格键/点击）
+        const resetAnimation = () => {
+            container.querySelectorAll('.char').forEach(char => {
+                char.style.animation = 'none';
+                setTimeout(() => char.style.animation = 
+                    `smartScale 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards`, 10);
+            });
+        };
+
+        document.addEventListener('keydown', (e) => e.code === 'Space' && resetAnimation());
+        container.addEventListener('click', resetAnimation);
     </script>
 </body>
 </html>
