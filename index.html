@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>科技感文字特效</title>
+    <title>科技感动态文字</title>
     <style>
         body {
             margin: 0;
@@ -11,90 +11,83 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            background: linear-gradient(120deg, 
+                #4FACFE 20%, 
+                #00F2FE 40%, 
+                #F98BFF 60%, 
+                #FF64B9 80%);
+            background-size: 400% 400%;
+            animation: gradientFlow 15s ease infinite;
             overflow: hidden;
         }
 
-        /* 文字容器特效 */
-        .text-container {
-            position: relative;
-            font-family: 'Helvetica Neue', 'SimHei', sans-serif;
-            font-size: 5rem;
-            font-weight: 700;
-            color: rgba(255,255,255,0.95);
-            text-shadow: 0 0 15px rgba(255,255,255,0.6);
-            perspective: 1000px;
+        /* 动态背景流动效果 */
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
-        /* 动态文字效果 */
+        .text-container {
+            font-family: 'Helvetica Neue', 'SimHei', sans-serif;
+            font-size: 8rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.95);
+            letter-spacing: 0.3em;
+            perspective: 800px;
+            text-align: center;
+            padding: 2rem;
+        }
+
         .char {
             display: inline-block;
             opacity: 0;
-            transform: translateY(30px) rotateX(90deg);
-            animation: charAppear 0.6s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+            transform: translateY(30px) rotateZ(10deg);
+            animation: bounceAppear 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
         }
 
-        /* 文字逐个出现动画 */
-        @keyframes charAppear {
-            to {
-                opacity: 1;
-                transform: translateY(0) rotateX(0);
-                text-shadow: 0 0 20px rgba(255,255,255,0.8);
+        /* 弹性文字动画 */
+        @keyframes bounceAppear {
+            0% { 
+                opacity: 0;
+                transform: translateY(50px) rotateZ(-15deg);
             }
-        }
-
-        /* 背景动态粒子效果 */
-        .particles {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            background: radial-gradient(circle, transparent 20%, #0f0c29 80%);
+            70% {
+                opacity: 1;
+                transform: translateY(-15px) rotateZ(5deg);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) rotateZ(0);
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 背景粒子容器 -->
-    <div class="particles"></div>
-    
-    <!-- 动态文字容器 -->
     <div class="text-container" id="text"></div>
 
     <script>
-        // 文字内容与动画配置
+        // 增强型弹性动画配置
         const text = "你好呀！";
-        const textContainer = document.getElementById('text');
+        const container = document.getElementById('text');
         
-        // 生成动态文字
         text.split('').forEach((char, index) => {
             const span = document.createElement('span');
             span.className = 'char';
             span.textContent = char;
-            span.style.animationDelay = `${index * 0.1}s`;
-            textContainer.appendChild(span);
+            span.style.animationDelay = `${index * 0.15}s`;
+            container.appendChild(span);
         });
 
-        // 动态生成背景粒子
-        function createParticles() {
-            const particles = document.querySelector('.particles');
-            for(let i=0; i<50; i++) {
-                const particle = document.createElement('div');
-                particle.style.cssText = `
-                    position: absolute;
-                    width: ${Math.random()*3}px;
-                    height: ${Math.random()*3}px;
-                    background: rgba(255,255,255,${Math.random()*0.4});
-                    left: ${Math.random()*100}%;
-                    top: ${Math.random()*100}%;
-                    animation: move ${10 + Math.random()*20}s linear infinite;
-                    border-radius: 50%;
-                `;
-                particles.appendChild(particle);
-            }
-        }
-
-        // 初始化效果
-        createParticles();
+        // 添加悬停互动效果
+        container.addEventListener('mouseover', () => {
+            container.style.transform = 'scale(1.05)';
+            container.style.transition = 'transform 0.3s ease';
+        });
+        
+        container.addEventListener('mouseout', () => {
+            container.style.transform = 'scale(1)';
+        });
     </script>
 </body>
 </html>
